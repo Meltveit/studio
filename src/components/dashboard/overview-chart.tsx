@@ -2,9 +2,9 @@
 "use client"
 
 import * as React from "react"
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, CartesianGrid } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { ChartTooltipContent } from "../ui/chart" // Assuming ChartTooltipContent exists
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "../ui/chart"; // Import ChartContainer and ChartTooltipContent
 
 // Initial empty data or server-side rendered placeholder structure
 const initialData = [
@@ -21,6 +21,14 @@ const initialData = [
   { name: "Nov", total: 0 },
   { name: "Dec", total: 0 },
 ];
+
+// Define chart configuration
+const chartConfig = {
+  total: {
+    label: "Total Sales",
+    color: "hsl(var(--primary))", // Use primary color from CSS variables
+  },
+} satisfies ChartConfig;
 
 export function OverviewChart() {
   const [chartData, setChartData] = React.useState(initialData);
@@ -42,43 +50,46 @@ export function OverviewChart() {
   if (!isClient) {
      // You could return a Skeleton placeholder here for better UX
     return (
-       <ResponsiveContainer width="100%" height={350}>
-            {/* Optional: Render a loading state or skeleton */}
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-                Loading chart...
-            </div>
-       </ResponsiveContainer>
+       <div className="flex items-center justify-center h-[350px] w-full text-muted-foreground">
+            Loading chart...
+       </div>
     );
   }
 
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart data={chartData}>
-        <XAxis
-          dataKey="name"
-          stroke="hsl(var(--muted-foreground))" // Use CSS variable
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-        />
-        <YAxis
-          stroke="hsl(var(--muted-foreground))" // Use CSS variable
-          fontSize={12}
-          tickLine={false}
-          axisLine={false}
-          tickFormatter={(value) => `€${value / 1000}k`}
-        />
-         <Tooltip
-           cursor={{ fill: 'hsl(var(--accent) / 0.3)' }} // Use accent color with opacity
-           content={<ChartTooltipContent />} // Use Shadcn tooltip content
-         />
-        <Bar
-          dataKey="total"
-          fill="hsl(var(--primary))" // Use primary color
-          radius={[4, 4, 0, 0]}
-        />
-      </BarChart>
-    </ResponsiveContainer>
+     <ChartContainer config={chartConfig} className="min-h-[200px] w-full h-[350px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={chartData} accessibilityLayer>
+            <CartesianGrid vertical={false} /> {/* Added for better readability */}
+            <XAxis
+              dataKey="name"
+              stroke="hsl(var(--muted-foreground))" // Use CSS variable
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8} // Added margin
+            />
+            <YAxis
+              stroke="hsl(var(--muted-foreground))" // Use CSS variable
+              fontSize={12}
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8} // Added margin
+              tickFormatter={(value) => `€${value / 1000}k`}
+            />
+             <ChartTooltip
+               cursor={{ fill: 'hsl(var(--accent) / 0.3)' }} // Use accent color with opacity
+               content={<ChartTooltipContent />} // Use Shadcn tooltip content
+             />
+            <Bar
+              dataKey="total"
+              fill="var(--color-total)" // Use color from chartConfig
+              radius={[4, 4, 0, 0]}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+     </ChartContainer>
   )
 }
 
+// Added CartesianGrid for better readability - Removed duplicate import
