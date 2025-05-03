@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -32,7 +33,7 @@ type SidebarContext = {
   setOpen: (open: boolean) => void
   openMobile: boolean
   setOpenMobile: (open: boolean) => void
-  isMobile: boolean
+  isMobile: boolean | undefined // Allow undefined during initial render
   toggleSidebar: () => void
 }
 
@@ -67,7 +68,7 @@ const SidebarProvider = React.forwardRef<
     },
     ref
   ) => {
-    const isMobile = useIsMobile()
+    const isMobile = useIsMobile() // Hook returns boolean | undefined
     const [openMobile, setOpenMobile] = React.useState(false)
 
     // This is the internal state of the sidebar.
@@ -84,13 +85,16 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
-        document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+         if (typeof document !== 'undefined') { // Ensure document is defined (client-side)
+            document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`
+         }
       },
       [setOpenProp, open]
     )
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
+       if (isMobile === undefined) return; // Don't toggle if mobile state is unknown
       return isMobile
         ? setOpenMobile((open) => !open)
         : setOpen((open) => !open)
@@ -98,6 +102,7 @@ const SidebarProvider = React.forwardRef<
 
     // Adds a keyboard shortcut to toggle the sidebar.
     React.useEffect(() => {
+       if (typeof window === 'undefined') return; // Ensure window is defined (client-side)
       const handleKeyDown = (event: KeyboardEvent) => {
         if (
           event.key === SIDEBAR_KEYBOARD_SHORTCUT &&
@@ -177,11 +182,17 @@ const Sidebar = React.forwardRef<
   ) => {
     const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
 
+    // Prevent rendering on server or before client-side check
+    if (isMobile === undefined) {
+        return null; // Or a placeholder/skeleton
+    }
+
     if (collapsible === "none") {
       return (
         <div
           className={cn(
             "flex h-full w-[--sidebar-width] flex-col bg-sidebar text-sidebar-foreground",
+             isMobile ? 'hidden' : 'flex', // Hide if mobile and collapsible is none (doesn't make sense)
             className
           )}
           ref={ref}
@@ -212,6 +223,7 @@ const Sidebar = React.forwardRef<
       )
     }
 
+    // Desktop view
     return (
       <div
         ref={ref}
@@ -556,6 +568,9 @@ const SidebarMenuButton = React.forwardRef<
     const Comp = asChild ? Slot : "button"
     const { isMobile, state } = useSidebar()
 
+     // Don't render tooltip on server or before client check
+     const shouldHideTooltip = isMobile === undefined || state !== "collapsed" || isMobile;
+
     const button = (
       <Comp
         ref={ref}
@@ -583,7 +598,7 @@ const SidebarMenuButton = React.forwardRef<
         <TooltipContent
           side="right"
           align="center"
-          hidden={state !== "collapsed" || isMobile}
+          hidden={shouldHideTooltip}
           {...tooltip}
         />
       </Tooltip>
@@ -761,3 +776,4 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
