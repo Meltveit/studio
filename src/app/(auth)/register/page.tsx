@@ -62,26 +62,30 @@ export default function RegisterPage() {
     await new Promise(resolve => setTimeout(resolve, 1500));
     console.log(`Registered ${email} for organization ${organizationName}`);
     // Simulate success and redirect (remove this in real implementation)
+    // For now, let's assume successful registration should lead to the dashboard
+    // In a real app, you might go to a "Check your email" page or onboarding
     router.push('/dashboard');
     setLoading(false);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-secondary">
-      <Card className="w-full max-w-sm">
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <Card className="w-full max-w-sm border shadow-lg"> {/* Added border and shadow */}
         <CardHeader className="space-y-1 text-center">
-          <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-8 w-8 mx-auto text-primary"
-             >
-               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-             </svg>
+          <Link href="/" className="inline-block mb-2"> {/* Make logo link to home */}
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-8 w-8 mx-auto text-primary"
+                 >
+                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                 </svg>
+          </Link>
           <CardTitle className="text-2xl font-bold">Create an Account</CardTitle>
           <CardDescription>Enter your details to create your Zenith CRM organization</CardDescription>
         </CardHeader>

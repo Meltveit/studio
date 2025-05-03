@@ -9,7 +9,7 @@ export default function AuthLayout({
 }) {
   return (
     // Simple layout, perhaps just centering the content or applying a specific background
-    <div className="min-h-screen flex items-center justify-center bg-secondary">
+    <div className="min-h-screen flex items-center justify-center bg-background">
       {children}
     </div>
   );

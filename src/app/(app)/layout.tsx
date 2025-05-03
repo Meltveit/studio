@@ -1,6 +1,6 @@
 import React from 'react';
 import { AppLayout } from '@/components/layout/app-layout';
-// import { AuthGuard } from '@/components/auth/auth-guard'; // Placeholder
+import { AuthGuard } from '@/components/auth/auth-guard'; // Uncommented AuthGuard
 
 export default function AuthenticatedAppLayout({
   children,
@@ -8,8 +8,9 @@ export default function AuthenticatedAppLayout({
   children: React.ReactNode;
 }) {
   return (
-    // <AuthGuard> Placeholder for protecting routes
+    // AuthGuard now wraps the AppLayout to protect routes
+    <AuthGuard>
       <AppLayout>{children}</AppLayout>
-    // </AuthGuard>
+    </AuthGuard>
   );
 }
