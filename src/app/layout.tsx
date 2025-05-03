@@ -1,10 +1,12 @@
-
+// src/app/layout.tsx
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
-// Removed GeistMono import as it's not used and caused build errors
 import './globals.css';
 import { cn } from '@/lib/utils';
-import { Toaster } from '@/components/ui/toaster'; // Ensure Toaster is imported if used globally
+import { Toaster } from '@/components/ui/toaster';
+import { AuthProvider } from '@/context/AuthContext';
+import { QueryProvider } from '@/providers/QueryProvider';
+import { ThemeProvider } from '@/providers/ThemeProvider';
 
 export const metadata: Metadata = {
   title: 'Zenith CRM Lite',
@@ -19,16 +21,25 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        suppressHydrationWarning // Added suppressHydrationWarning here as well
+        suppressHydrationWarning
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
-          GeistSans.variable // Apply Geist Sans font variable
+          GeistSans.variable
         )}
       >
-        {children}
-        <Toaster /> {/* Render Toaster globally if needed */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+        >
+          <QueryProvider>
+            <AuthProvider>
+              {children}
+              <Toaster />
+            </AuthProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
 }
-
