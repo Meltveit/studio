@@ -15,6 +15,7 @@ import Link from "next/link";
 import { useState } from "react";
 // import { useAuth } from "@/context/AuthContext"; // Placeholder
 import { useRouter } from "next/navigation";
+import { Home } from "lucide-react"; // Import Home icon
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -44,6 +45,8 @@ export default function LoginPage() {
         // Simulate API call
         await new Promise(resolve => setTimeout(resolve, 1000));
         if (email === "admin@example.com" && password === "password") {
+             // In a real app, set auth state here (e.g., save token, update context)
+             // For demo, just redirect
              router.push('/dashboard');
         } else {
             setError("Invalid email or password.");
@@ -111,13 +114,18 @@ export default function LoginPage() {
             </Button>
           </form>
         </CardContent>
-         <CardFooter className="flex flex-col items-center text-sm">
+         <CardFooter className="flex flex-col items-center text-sm space-y-2"> {/* Added space-y-2 */}
               <p className="text-muted-foreground">
                  Don't have an account?{" "}
                  <Link href="/register" className="font-medium text-primary hover:underline">
                    Register
                  </Link>
               </p>
+               {/* Added Back to Home link */}
+               <Link href="/" className="text-muted-foreground hover:text-primary hover:underline flex items-center gap-1">
+                 <Home className="h-3.5 w-3.5" />
+                 Back to Home
+               </Link>
           </CardFooter>
       </Card>
     </div>
