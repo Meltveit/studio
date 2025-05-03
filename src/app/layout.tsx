@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 // Removed GeistMono import as it's not used and caused build errors
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning // Added suppressHydrationWarning here as well
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
           GeistSans.variable // Apply Geist Sans font variable
@@ -29,3 +31,4 @@ export default function RootLayout({
     </html>
   );
 }
+
